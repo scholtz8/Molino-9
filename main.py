@@ -20,8 +20,6 @@ class Tablero(object):
     def cambiar_estado(self,nodo,estado):
         self.grafo.node[nodo]['estado'] = estado
 
-    
-
 
 t = Tablero()
 
