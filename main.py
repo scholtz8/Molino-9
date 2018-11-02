@@ -20,8 +20,8 @@ class Tablero(object):
     def cambiar_estado(self,nodo,estado):
         self.grafo.node[nodo]['estado'] = estado
 
+    
+
+
 t = Tablero()
-print(t.ver_estado(12))
-t.cambiar_estado(12,'blanco')
-print(t.ver_estado(12))
-print(t.ver_estado(13))
+
