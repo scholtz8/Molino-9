@@ -1,66 +1,8 @@
-import networkx as net
+from tablero import Tablero
+from jugador import Jugador
+
 
 print('Molino 9')
-
-class Tablero(object):
-
-    #representacion del tablero por un grafo, donde los nodos con los puntos donde se pueden poner las fichas y los vertices las lineas del tablero que los conectan
-    def __init__(self):
-        self.grafo = net.Graph()
-        self.grafo.add_nodes_from(list(range(1,25)),estado='V')
-        self.grafo.add_edges_from([(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,8),(8,1),(9,10),(10,11),
-        (11,12),(12,13),(13,14),(14,15),(15,16),(16,9),(17,18),(18,19),(19,20),(20,21),(21,22),
-        (22,23),(23,24),(24,17),(2,10),(10,18),(4,12),(12,20),(6,14),(14,22),(8,16),(16,24)])
-
-    #obtener nodos adyacentes a un nodo
-    def adyacentes(self,nodo):
-        return [n for n in self.grafo[nodo]]
-
-    # ver si el nodo esta vacio(V) o ocupado por una ficha blanca(B) o negra(N)
-    def ver_estado(self,nodo):
-        return self.grafo.node[nodo]['estado']
-
-    #cambiar el estado del noda al poner o mover una ficha del o hacia el nodo
-    def cambiar_estado(self,nodo,estado):
-        self.grafo.node[nodo]['estado'] = estado
-
-    #print del tablero
-    def ver_tablero(self):
-        print(self.ver_estado(1)+"01"+"-"*17+self.ver_estado(2)+"02"+"-"*17+self.ver_estado(3)+"03")
-        print(" |"+" "*19+"|"+" "*19+"|")
-        print(" |     "+self.ver_estado(9)+"09"+"-"*10+self.ver_estado(10)+"10"+"-"*10+self.ver_estado(11)+"11"+"     |")
-        print(" |"+" "*6+"|"+" "*12+"|"+" "*12+"|"+" "*6+"|")
-        print(" |      |    "+self.ver_estado(17)+"17----"+self.ver_estado(18)+"18----"+self.ver_estado(19)+"19    |      |")
-        print(" |"+" "*6+"|"+" "*5+"|"+" "*13+"|"+" "*5+"|"+" "*6+"|")
-        print(self.ver_estado(8)+"08"+"-"*4+self.ver_estado(16)+"16"+"-"*3+self.ver_estado(24)+"24"+" "*11+self.ver_estado(20)+"20"+"-"*3+self.ver_estado(12)+"12"+"-"*4+self.ver_estado(4)+"04")
-        print(" |"+" "*6+"|"+" "*5+"|"+" "*13+"|"+" "*5+"|"+" "*6+"|")
-        print(" |      |    "+self.ver_estado(23)+"23----"+self.ver_estado(22)+"22----"+self.ver_estado(21)+"21    |      |")
-        print(" |"+" "*6+"|"+" "*12+"|"+" "*12+"|"+" "*6+"|")
-        print(" |     "+self.ver_estado(15)+"15"+"-"*10+self.ver_estado(14)+"14"+"-"*10+self.ver_estado(13)+"13"+"     |")
-        print(" |"+" "*19+"|"+" "*19+"|")
-        print(self.ver_estado(7)+"07"+"-"*17+self.ver_estado(6)+"06"+"-"*17+self.ver_estado(5)+"05")
-
-class Jugador(object):
-
-    def __init__(self,num_piezas,color):
-        self.color = color
-        self.piezas = num_piezas
-        self.perdidas = 0
-
-    def ver_piezas(self):
-        return self.piezas
-
-    def ver_muertas(self):
-        return self.perdidas
-
-    def ver_color(self):
-        return self.color
-
-    def jugar_pieza(self):
-        self.piezas -= 1
-
-    def matar_pieza(self):
-        self.perdidas += 1
 
 class Partida(object):
 
@@ -84,6 +26,20 @@ class Partida(object):
             return True
         else:
             print(f'ESPACIO YA UTILIZADO\n')
+            return False
+
+    def pieza_movible(self,nodo,color):
+        if self.tablero.ver_estado(nodo) == color:
+            ady = self.tablero.adyacentes(nodo)
+            mov_posibles = []
+            for n in ady:
+                if self.tablero.ver_estado(n) == 'V':
+                    mov_posibles.append(n)
+            if mov_posibles.__len__() > 0:
+                return True
+            else:
+                return False
+        else:
             return False
 
     def jugar_turno(self):
@@ -113,7 +69,17 @@ class Partida(object):
         else:
             #fase de mover piezas
             if jugador.ver_muertas() < self.piezas_juego - 3:
-                print('wena')
+                while True:
+                    try:
+                        numero = int(input(jugador.color+"¿Que pieza va a mover?:"))
+                    except:
+                        print(f'POSICION INVALIDA\n')
+                    if self.pieza_movible(numero,jugador.ver_color()) == True:
+                        print('se puede mover la pieza\n')
+                        break
+                    else:
+                        print('no se puede mover la pieza')
+
                 return
             #fase de vuelo
             else:
@@ -122,8 +88,16 @@ class Partida(object):
 
         self.cambiar_turno()
         return
-    
+
+t = Tablero()
+t.ver_tablero()
+print(t.adyacentes(1),t.adyacentes_vacios(1))
+t.cambiar_estado(2,'N')
+print(t.adyacentes(1),t.adyacentes_vacios(1))
+
+'''    
 p = Partida(9)
 for i in range(0,13):
     p.jugar_turno()
     p.jugar_turno()
+'''
