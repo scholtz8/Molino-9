@@ -19,85 +19,102 @@ class Partida(object):
             self.turno = 2
         else:
             self.turno = 1
+            
+    def ver_turno(self):
+        if self.turno == 1:
+            return self.jugador1
+        else:
+            return self.jugador2
 
-    def posicionar_pieza(self,nodo,color):
+    def poner_pieza(self,nodo,color):
         if self.tablero.ver_estado(nodo) == 'V':
             self.tablero.cambiar_estado(nodo,color)
             return True
         else:
-            print(f'ESPACIO YA UTILIZADO\n')
+            print('ESPACIO OCUPADO\n')
             return False
 
-    def pieza_movible(self,nodo,color):
-        if self.tablero.ver_estado(nodo) == color:
-            ady = self.tablero.adyacentes(nodo)
-            mov_posibles = []
-            for n in ady:
-                if self.tablero.ver_estado(n) == 'V':
-                    mov_posibles.append(n)
-            if mov_posibles.__len__() > 0:
-                return True
+    def piezas_jugadas(self,color):
+        piezas = []
+        for i in range(1,25):
+            if self.tablero.ver_estado(i) == color:
+                piezas.append(i)
+        return piezas
+
+    def piezas_movibles(self,color):
+        piezas_jugador = self.piezas_jugadas(color)
+        for p in piezas_jugador:
+            ady_v = self.tablero.adyacentes_vacios(p)
+            if ady_v.__len__() == 0:
+                piezas_jugador.remove(p)
+        return piezas_jugador
+
+    def movimientos_posibles(self,nodo):
+        return self.tablero.adyacentes_vacios(nodo)
+
+    def mover_pieza(self,origen,destino,color):
+        self.tablero.cambiar_estado(origen,'V')
+        self.tablero.cambiar_estado(destino,color)
+
+    def fase1(self,jugador):
+        while True:
+            try:
+                numero = int(input("("+jugador.ver_color()+") ELIJA UN ESPACIO EN EL TABLERO:"))
+            except ValueError:
+                print('ESPACIO INVALIDO\n')
+                continue
+            if numero < 1 or numero > 24:
+                print('ESPACIO INVALIDO\n')
+                continue
             else:
-                return False
-        else:
-            return False
+                if self.poner_pieza(numero,jugador.ver_color()) == False:
+                    continue
+                else:
+                    jugador.restar_pieza()
+                    break
+
+    def fase2(self,jugador):
+        while True:
+            try:
+                origen, destino = [int(x) for x in input("("+jugador.ver_color()+") PIEZA A MOVER Y DONDE:").split()]
+            except ValueError:
+                print('VALOR O VALORES INVALIDOS\n')
+                continue
+            if origen not in self.piezas_movibles(jugador.ver_color()):
+                print('PIEZA A MOVER INVALIDA\n')
+                continue
+            else:
+                if destino not in self.movimientos_posibles(origen):
+                    print('MOVIMIENTO DE '+str(origen)+' a '+str(destino)+' INVALIDO\n')
+                    continue
+                else:
+                    self.mover_pieza(origen,destino,jugador.ver_color())
+                    break
+    
+
+    def fase3(self,jugador):
+        
+
+        return
+    
 
     def jugar_turno(self):
-        if self.turno == 1:
-            jugador = self.jugador1
-        else:
-            jugador = self.jugador2
 
-        #fase de posicionar piezas
-        if jugador.ver_piezas() > 0:
-            i = False
-            while not i:
-                self.tablero.ver_tablero()
-                while True:
-                    try:
-                        numero = int(input(jugador.color+"¿Donde va poner la pieza?:"))
-                    except ValueError:
-                        print(f'ESPACIO INVALIDO\n')
-                        continue
-                    if numero < 1 or numero > 24:
-                        print(f'ESPACIO INVALIDO\n')
-                        continue
-                    else:
-                        break
-                i = self.posicionar_pieza(numero,jugador.ver_color())
-            jugador.jugar_pieza()
-        else:
-            #fase de mover piezas
-            if jugador.ver_muertas() < self.piezas_juego - 3:
-                while True:
-                    try:
-                        numero = int(input(jugador.color+"¿Que pieza va a mover?:"))
-                    except:
-                        print(f'POSICION INVALIDA\n')
-                    if self.pieza_movible(numero,jugador.ver_color()) == True:
-                        print('se puede mover la pieza\n')
-                        break
-                    else:
-                        print('no se puede mover la pieza')
+        self.tablero.ver_tablero()
 
-                return
-            #fase de vuelo
+        if self.ver_turno().ver_piezas() > 0:
+            self.fase1(self.ver_turno())
+        else:
+            if self.ver_turno().ver_perdidas() < self.piezas_juego - 3:
+                self.fase2(self.ver_turno())
             else:
-                print('wenu')
-                return
-
+                self.fase3(self.ver_turno())
+                
         self.cambiar_turno()
-        return
 
-t = Tablero()
-t.ver_tablero()
-print(t.adyacentes(1),t.adyacentes_vacios(1))
-t.cambiar_estado(2,'N')
-print(t.adyacentes(1),t.adyacentes_vacios(1))
 
-'''    
 p = Partida(9)
-for i in range(0,13):
+for i in range(0,23):
     p.jugar_turno()
-    p.jugar_turno()
-'''
+
+
