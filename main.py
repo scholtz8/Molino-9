@@ -26,14 +26,6 @@ class Partida(object):
         else:
             return self.jugador2
 
-    def poner_pieza(self,nodo,color):
-        if self.tablero.ver_estado(nodo) == 'V':
-            self.tablero.cambiar_estado(nodo,color)
-            return True
-        else:
-            print('ESPACIO OCUPADO\n')
-            return False
-
     def piezas_jugadas(self,color):
         piezas = []
         for i in range(1,25):
@@ -56,9 +48,11 @@ class Partida(object):
         self.tablero.cambiar_estado(origen,'V')
         self.tablero.cambiar_estado(destino,color)
 
+    # fase de colocar piezas en el tablero
     def fase1(self,jugador):
         while True:
             try:
+                self.tablero.ver_tablero()
                 numero = int(input("("+jugador.ver_color()+") ELIJA UN ESPACIO EN EL TABLERO:"))
             except ValueError:
                 print('ESPACIO INVALIDO\n')
@@ -67,15 +61,18 @@ class Partida(object):
                 print('ESPACIO INVALIDO\n')
                 continue
             else:
-                if self.poner_pieza(numero,jugador.ver_color()) == False:
+                if self.tablero.ver_estado(numero) != 'V':
+                    print('ESPACIO OCUPADO\n')
                     continue
                 else:
+                    self.tablero.cambiar_estado(numero,jugador.ver_color())
                     jugador.restar_pieza()
-                    break
+                    break                    
 
     def fase2(self,jugador):
         while True:
             try:
+                self.tablero.ver_tablero()
                 origen, destino = [int(x) for x in input("("+jugador.ver_color()+") PIEZA A MOVER Y DONDE:").split()]
             except ValueError:
                 print('VALOR O VALORES INVALIDOS\n')
@@ -100,8 +97,6 @@ class Partida(object):
 
     def jugar_turno(self):
 
-        self.tablero.ver_tablero()
-
         if self.ver_turno().ver_piezas() > 0:
             self.fase1(self.ver_turno())
         else:
@@ -109,7 +104,7 @@ class Partida(object):
                 self.fase2(self.ver_turno())
             else:
                 self.fase3(self.ver_turno())
-                
+
         self.cambiar_turno()
 
 

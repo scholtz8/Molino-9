@@ -22,10 +22,11 @@ class Tablero(object):
     # obtener nodos adyacentes vacios a un nodo
     def adyacentes_vacios(self,nodo):
         ady = self.adyacentes(nodo)
+        ady_v = []
         for a in ady:
-            if self.ver_estado(a) != 'V':
-                ady.remove(a)
-        return ady
+            if self.ver_estado(a) == 'V':
+                ady_v.append(a)
+        return ady_v
 
     # cambiar el estado del noda al poner o mover una ficha del o hacia el nodo
     def cambiar_estado(self,nodo,estado):
