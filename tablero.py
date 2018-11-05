@@ -1,6 +1,6 @@
 import networkx as net
 
-class Tablero(object):
+class Tablero9(object):
 
     # representacion del tablero por un grafo, donde los nodos con los puntos donde se pueden poner las fichas y 
     # los vertices las lineas del tablero que los conectan
