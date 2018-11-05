@@ -111,6 +111,7 @@ class Partida(object):
     def eliminar_pieza(self,jugador):        
         while True:
             try:
+                print('Piezas eliminables:',self.piezas_eliminables(self.ver_rival(jugador.ver_color())))
                 eliminada = int(input("("+jugador.ver_color()+") ELIJA LA PIEZA OPONENTE A ELIMINAR:"))
             except ValueError:
                 print('VALOR INVALIDO\n')
@@ -231,7 +232,7 @@ class Partida(object):
                 break
             else:
                 continue
-                
+
 p = Partida(9)
 p.jugar_partida()
 
