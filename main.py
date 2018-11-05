@@ -26,6 +26,13 @@ class Partida(object):
         else:
             return self.jugador2
 
+    def espacios_vacios(self):
+        vacios = []
+        for i in range(1,25):
+            if self.tablero.ver_estado(i) == 'V':
+                vacios.append(i)
+        return vacios
+
     # lista con las piezas en juego del jugador
     def piezas_jugadas(self,color):
         piezas = []
@@ -167,9 +174,31 @@ class Partida(object):
     
 
     def fase3(self,jugador):
-        
-
-        return
+        while True:
+            try:
+                self.tablero.ver_tablero()
+                ##
+                print('Piezas movibles:',self.piezas_jugadas(jugador.ver_color()))
+                ##
+                origen = int(input("("+jugador.ver_color()+") PIEZA A MOVER:"))
+            except ValueError:
+                print('VALOR O VALORES INVALIDOS\n')
+                continue
+            if origen not in self.piezas_jugadas(jugador.ver_color()):
+                print('PIEZA A MOVER INVALIDA\n')
+                continue
+            else:
+                ##
+                print('Movimientos posibles:',self.espacios_vacios())
+                ##
+                destino = int(input("("+jugador.ver_color()+") POSICION A MOVER:"))
+                if destino not in self.espacios_vacios():
+                    print('MOVIMIENTO DE '+str(origen)+' a '+str(destino)+' INVALIDO\n')
+                    continue
+                else:
+                    self.mover_pieza(origen,destino,jugador.ver_color())
+                    break
+        return destino
     
 
     def jugar_turno(self):
@@ -189,9 +218,20 @@ class Partida(object):
             self.eliminar_pieza(self.ver_turno())
     
         self.cambiar_turno()
-
+        if self.piezas_movibles(self.ver_turno().ver_color()).__len__() == 0 and self.ver_turno().ver_piezas() == 0:
+            print(self.ver_rival(self.ver_turno().ver_color()).ver_color(), 'GANA')
+            return 1
+        if self.piezas_juego - self.ver_turno().ver_perdidas() < 3:
+            print(self.ver_rival(self.ver_turno().ver_color()).ver_color(), 'GANA')
+            return 1
+    
+    def jugar_partida(self):
+        while True:
+            if self.jugar_turno() == 1:
+                break
+            else:
+                continue
+                
 p = Partida(9)
-while True:
-    p.jugar_turno()
-
+p.jugar_partida()
 
