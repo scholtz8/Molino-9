@@ -10,7 +10,19 @@ class Tablero(object):
         self.grafo.add_edges_from([(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,8),(8,1),(9,10),(10,11),
         (11,12),(12,13),(13,14),(14,15),(15,16),(16,9),(17,18),(18,19),(19,20),(20,21),(21,22),
         (22,23),(23,24),(24,17),(2,10),(10,18),(4,12),(12,20),(6,14),(14,22),(8,16),(16,24)])
+        self.molinos = [ [1,2,3],[3,4,5],[5,6,7],[7,8,1],[9,10,11],[11,12,13],[13,14,15],[15,16,9],
+        [17,18,19],[19,20,21],[21,22,23],[23,24,17],[2,10,18],[4,12,20],[6,14,22],[8,16,24] ]
 
+    # ver molinos asociados a un nodo
+    def ver_molinos(self,nodo):
+        molinos = self.molinos
+        molinos_nodo = []
+        for m in molinos:
+            for n in m:
+                if nodo == n:
+                    molinos_nodo.append(m)
+        return molinos_nodo
+        
     # obtener nodos adyacentes a un nodo
     def adyacentes(self,nodo):
         return [n for n in self.grafo[nodo]]
