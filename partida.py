@@ -10,22 +10,25 @@ class Partida(object):
         self.jugador2 = Jugador(num_piezas,'N')
         self.tablero = Tablero9()
 
+    def piezas_tablero(self):
+        return self.piezas_juego
+
     #cambiar a turno entre el jugador 1 y 2
     def cambiar_turno(self):
         if self.turno == 1:
             self.turno = 2
-        else:
+        elif self.turno == 2:
             self.turno = 1
             
     def ver_turno(self):
         if self.turno == 1:
             return self.jugador1
-        else:
+        if self.turno == 2:
             return self.jugador2
 
     def espacios_vacios(self):
         vacios = []
-        for i in range(1,self.piezas_juego+1):
+        for i in range(1,self.tablero.tam_tablero()+1):
             if self.tablero.ver_estado(i) == 'V':
                 vacios.append(i)
         return vacios
@@ -33,7 +36,7 @@ class Partida(object):
     # lista con las piezas en juego del jugador
     def piezas_jugadas(self,color):
         piezas = []
-        for i in range(1,self.piezas_juego+1):
+        for i in range(1,self.tablero.tam_tablero()+1):
             if self.tablero.ver_estado(i) == color:
                 piezas.append(i)
         return piezas
@@ -69,42 +72,40 @@ class Partida(object):
     # ver si pieza pertenece a un molino
     def es_molino(self,pieza,jugador):
         molinos = self.tablero.ver_molinos(pieza)
-        for m in molinos:
-            i = 0
-            for p in m:
-                if self.tablero.ver_estado(p) == jugador.ver_color():
-                    i += 1
-                if i == 3:
-                    return True
+        color = jugador.ver_color()
+        for molino in molinos:
+            count = 0
+            for nodo in molino:
+                if self.tablero.ver_estado(nodo) == color:
+                    count += 1
+            if count == 3:
+                print('pieza',pieza,'molino',molino)
+                return True    
         return False
 
     # obtener el color del jugador oponente
     def ver_rival(self,color_jugador):
         if color_jugador == 'B':
             return self.jugador2
-        else:
+        if color_jugador == 'N':
             return self.jugador1
 
     # lista de piezas que pueden ser eliminadas
     def piezas_eliminables(self,jugador):
-        # cantidad de piezas que le quedan al jugador
-        piezas_jugadas = self.piezas_jugadas(jugador.ver_color())
-        piezas_no_molino = []
-        contador_piezas_molino = 0
+        # problema aca
+        piezas_jugador = self.piezas_jugadas(jugador.ver_color())
+        #
+        piezas_no_molinos = []
+        print('piezas del rival',piezas_jugador)
+        for p in piezas_jugador:
+            if self.es_molino(p,jugador) == False:
+                piezas_no_molinos.append(p)
 
-        # juntar todas las piezas que no pertenecen a un molino
-        for p in piezas_jugadas:
-            if self.es_molino(p,jugador):
-                contador_piezas_molino += 1
-            else:
-                piezas_no_molino.append(p)
-        # si hay almenos una pieza que no pertenezca a un molino entonces esa es la unica opcion a eliminar
-        # si no ya se pueden considerar todas las piezas del jugador
-        if contador_piezas_molino == piezas_jugadas.__len__():
-            return piezas_jugadas
+        if piezas_no_molinos.__len__() == 0:
+            return piezas_jugador
         else:
-            return piezas_no_molino
-        
+            return piezas_no_molinos
+
     def eliminar_pieza(self,jugador):        
         while True:
             try:

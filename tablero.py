@@ -22,6 +22,9 @@ class Tablero9(object):
                 if nodo == n:
                     molinos_nodo.append(m)
         return molinos_nodo
+    
+    def tam_tablero(self):
+        return self.grafo.nodes.__len__()
         
     # obtener nodos adyacentes a un nodo
     def adyacentes(self,nodo):
@@ -50,3 +53,13 @@ class Tablero9(object):
         print(" |     "+self.ver_estado(15)+"15"+"-"*10+self.ver_estado(14)+"14"+"-"*10+self.ver_estado(13)+"13"+"     |")
         print(" |"+" "*19+"|"+" "*19+"|")
         print(self.ver_estado(7)+"07"+"-"*17+self.ver_estado(6)+"06"+"-"*17+self.ver_estado(5)+"05")
+
+
+t = Tablero9()
+'''
+
+for i in range (1,25):
+    #print(t.ver_molinos(i),'\n')
+    for n in t.ver_molinos(i):
+        print(n,'')
+'''     
