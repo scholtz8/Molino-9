@@ -8,7 +8,7 @@ class Jugador(object):
         # numero de piezas perdidas
         self.perdidas = 0
 
-    def ver_piezas(self):
+    def no_jugadas(self):
         return self.piezas
 
     def ver_perdidas(self):
@@ -17,8 +17,8 @@ class Jugador(object):
     def ver_color(self):
         return self.color
 
-    def restar_pieza(self):
+    def restar_piezas(self):
         self.piezas -= 1
 
-    def perder_pieza(self):
+    def sumar_perdidas(self):
         self.perdidas += 1
