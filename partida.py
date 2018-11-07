@@ -1,4 +1,4 @@
-from tablero import Tablero9
+from tablero import Tablero
 from jugador import Jugador
 
 class Partida(object):
@@ -8,7 +8,7 @@ class Partida(object):
         self.piezas_por_jugador = num_piezas
         self.jugador1 = Jugador(num_piezas,'B')
         self.jugador2 = Jugador(num_piezas,'N')
-        self.tablero = Tablero9()
+        self.tablero = Tablero(num_piezas)
 
     def ver_juego(self):
         self.tablero.ver_tablero()
@@ -167,9 +167,13 @@ class Partida(object):
                 print('PIEZA A MOVER INVALIDA\n')
                 continue
             else:
-                posibles = self.movimientos_posibles(origen)
-                print('Movimientos posibles:',posibles)
-                destino = int(input("("+color+") POSICION A MOVER:"))
+                try:
+                    posibles = self.movimientos_posibles(origen)
+                    print('Movimientos posibles:',posibles)
+                    destino = int(input("("+color+") POSICION A MOVER:"))
+                except ValueError:
+                    print('MOVIMIENTO INVALIDO\n')
+                    continue
                 if destino not in posibles:
                     print('MOVIMIENTO DE '+str(origen)+' a '+str(destino)+' INVALIDO\n')
                     continue
@@ -193,8 +197,12 @@ class Partida(object):
                 print('PIEZA A MOVER INVALIDA\n')
                 continue
             else:
-                print('Movimientos posibles:',vacios)
-                destino = int(input("("+color+") POSICION A MOVER:"))
+                try:
+                    print('Movimientos posibles:',vacios)
+                    destino = int(input("("+color+") POSICION A MOVER:"))
+                except ValueError:
+                    print('MOVIMIENTO INVALIDO\n')
+                    continue                    
                 if destino not in vacios:
                     print('MOVIMIENTO DE '+str(origen)+' a '+str(destino)+' INVALIDO\n')
                     continue
