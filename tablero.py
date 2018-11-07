@@ -8,6 +8,14 @@ nodos3 = list(range(1,10))
 vertices3 = [(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,8),(8,1),(2,9),(4,9),(6,9),(8,9)]
 molinos3 = [[1,2,3],[3,4,5],[5,6,7],[7,8,1],[2,9,6],[8,9,4]]
 
+nodos56 = list(range(1,17))
+vertices56 = [(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,8),(8,1),(9,10),(10,11),(11,12),(12,13),(13,14),(14,15),(15,16),(16,9),(2,10),(4,12),(6,14),(8,16)]
+molinos56 = [[1,2,3],[3,4,5],[5,6,7],[7,8,1],[9,10,11],[11,12,13],[13,14,15],[15,16,9]]
+
+nodos7 = list(range(1,18))
+vertices7 = [(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,8),(8,1),(9,10),(10,11),(11,12),(12,13),(13,14),(14,15),(15,16),(16,9),(2,10),(4,12),(6,14),(8,16),(10,17),(12,17),(14,17),(16,17)]
+molinos7 = [[1,2,3],[3,4,5],[5,6,7],[7,8,1],[9,10,11],[11,12,13],[13,14,15],[15,16,9],[2,10,17],[10,17,14],[17,14,6],[8,16,17],[16,17,12],[17,12,4]]
+
 class Tablero(object):
     # representacion del tablero por un grafo, donde los nodos con los puntos donde se pueden poner las fichas y 
     # los vertices las lineas del tablero que los conectan
@@ -22,6 +30,14 @@ class Tablero(object):
             self.grafo.add_nodes_from(nodos3,estado='V')
             self.grafo.add_edges_from(vertices3)
             self.molinos = molinos3
+        elif numero == 5 or numero == 6:
+            self.grafo.add_nodes_from(nodos56,estado='V')
+            self.grafo.add_edges_from(vertices56)
+            self.molinos = molinos56
+        elif numero == 7:
+            self.grafo.add_nodes_from(nodos7,estado='V')
+            self.grafo.add_edges_from(vertices7)
+            self.molinos = molinos7
 
 
     # ver molinos asociados a un nodo
@@ -72,3 +88,26 @@ class Tablero(object):
             print(self.ver_estado(8)+"08----"+self.ver_estado(9)+"09----"+self.ver_estado(4)+"04")
             print(" |"+" "*6+"|"+" "*6+"|" )
             print(self.ver_estado(7)+"07----"+self.ver_estado(6)+"06----"+self.ver_estado(5)+"05")
+            print(' ')
+        elif self.numero == 5 or self.numero == 6:
+            print(self.ver_estado(1)+"01"+"-"*10+self.ver_estado(2)+"02"+"-"*10+self.ver_estado(3)+"03")
+            print(" |"+" "*12+"|"+" "*12+"|")
+            print(" |    "+self.ver_estado(9)+"09----"+self.ver_estado(10)+"10----"+self.ver_estado(11)+"11    |")
+            print(" |"+" "*5+"|"+" "*13+"|"+" "*5+"|")
+            print(self.ver_estado(8)+"08"+"-"*3+self.ver_estado(16)+"16"+" "*11+self.ver_estado(12)+"12"+"-"*3+self.ver_estado(4)+"04")
+            print(" |"+" "*5+"|"+" "*13+"|"+" "*5+"|")
+            print(" |    "+self.ver_estado(15)+"15----"+self.ver_estado(14)+"14----"+self.ver_estado(13)+"13    |")
+            print(" |"+" "*12+"|"+" "*12+"|")
+            print(self.ver_estado(7)+"07"+"-"*10+self.ver_estado(6)+"06"+"-"*10+self.ver_estado(5)+"05")
+            print(' ')
+        elif self.numero == 7:
+            print(self.ver_estado(1)+"01"+"-"*10+self.ver_estado(2)+"02"+"-"*10+self.ver_estado(3)+"03")
+            print(" |"+" "*12+"|"+" "*12+"|")
+            print(" |    "+self.ver_estado(9)+"09----"+self.ver_estado(10)+"10----"+self.ver_estado(11)+"11    |")
+            print(" |"+" "*5+"|"+" "*6+"|"+" "*6+"|"+" "*5+"|")
+            print(self.ver_estado(8)+"08"+"-"*3+self.ver_estado(16)+"16"+"-"*4+self.ver_estado(17)+"17"+"-"*4+self.ver_estado(12)+"12"+"-"*3+self.ver_estado(4)+"04")
+            print(" |"+" "*5+"|"+" "*6+"|"+" "*6+"|"+" "*5+"|")
+            print(" |    "+self.ver_estado(15)+"15----"+self.ver_estado(14)+"14----"+self.ver_estado(13)+"13    |")
+            print(" |"+" "*12+"|"+" "*12+"|")
+            print(self.ver_estado(7)+"07"+"-"*10+self.ver_estado(6)+"06"+"-"*10+self.ver_estado(5)+"05")
+            print(' ')
