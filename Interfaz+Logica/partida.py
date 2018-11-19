@@ -20,7 +20,6 @@ class Partida(object):
         fondo = pygame.image.load("images/fondo3.jpeg").convert()       
         pygame.display.set_caption("Molino 9")
         screen.blit(fondo, (0, 0))
-        #insert_grilla(screen)
         self.tablero.dibujar_tablero(screen)
         pygame.display.flip()
         while True:
@@ -30,8 +29,8 @@ class Partida(object):
                 if pygame.mouse.get_pressed()[0]:
                     self.tablero.posicionar_ficha(screen)
 
-    def ver_juego(self):
-        self.tablero.ver_tablero()
+#    def ver_juego(self):
+#        self.tablero.ver_tablero()
 
     #cambiar a turno entre el jugador 1 y 2
     def cambio_turno(self):
