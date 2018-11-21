@@ -1,17 +1,36 @@
-from tablero import Tablero
+#from tablero import Tablero
 from jugador import Jugador
+from grafica_tablero import Tablero
+import pygame
+from pygame.locals import *
+import os
+import sys
 
 class Partida(object):
 
     def __init__(self,num_piezas):
         self.turno = 1
         self.piezas_por_jugador = num_piezas
-        self.jugador1 = Jugador(num_piezas,'B')
-        self.jugador2 = Jugador(num_piezas,'N')
-        self.tablero = Tablero(num_piezas)
+        #self.jugador1 = Jugador(num_piezas,'B')
+        #self.jugador2 = Jugador(num_piezas,'N')
+        #self.tablero = Tablero(num_piezas)
+        self.tablero = Tablero(num_piezas,0)
+        pygame.init()
+        screen=pygame.display.set_mode([1064,603])
+        fondo = pygame.image.load("images/fondo3.jpeg").convert()       
+        pygame.display.set_caption("Molino 9")
+        screen.blit(fondo, (0, 0))
+        self.tablero.dibujar_tablero(screen)
+        pygame.display.flip()
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit(0)
+                if pygame.mouse.get_pressed()[0]:
+                    self.tablero.posicionar_ficha(screen)
 
-    def ver_juego(self):
-        self.tablero.ver_tablero()
+#    def ver_juego(self):
+#        self.tablero.ver_tablero()
 
     #cambiar a turno entre el jugador 1 y 2
     def cambio_turno(self):
@@ -258,11 +277,3 @@ class Partida(object):
                 break
             else:
                 continue
-
-    def movimiento_posible(x, y, area_posible):
-        print("punto a adjuntar", x, y)
-        for idx, punto_inicial in enumerate(area_posible):
-            if(x >= punto_inicial[0] and y >=punto_inicial[1] and x <= punto_inicial[0]+50 and y <=punto_inicial[1]+50):
-                print("posicion ", idx+1)
-                return True
-        return False
