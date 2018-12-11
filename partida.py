@@ -1,17 +1,17 @@
 from tablero import Tablero
 from jugador import Jugador
+import pygame
+from pygame.locals import *
+from functools import partial
 
 class Partida(object):
 
     def __init__(self,num_piezas):
         self.turno = 1
         self.piezas_por_jugador = num_piezas
-        self.jugador1 = Jugador(num_piezas,'B')
-        self.jugador2 = Jugador(num_piezas,'N')
+        self.jugador1 = Jugador(num_piezas,'A')
+        self.jugador2 = Jugador(num_piezas,'R')
         self.tablero = Tablero(num_piezas)
-
-    def ver_juego(self):
-        self.tablero.ver_tablero()
 
     #cambiar a turno entre el jugador 1 y 2
     def cambio_turno(self):
@@ -134,82 +134,66 @@ class Partida(object):
 
     # fase de colocar piezas en el tablero
     def fase1(self,color):
-        tam = self.tablero.tam_tablero()
         while True:
-            try:
-                numero = int(input("("+color+") ELIJA UN ESPACIO EN EL TABLERO:"))
-            except ValueError:
-                print('ESPACIO INVALIDO\n')
-                continue
-            if numero < 1 or numero > tam:
-                print('ESPACIO INVALIDO\n')
-                continue
-            else:
-                if self.tablero.ver_estado(numero) != 'V':
-                    print('ESPACIO OCUPADO\n')
-                    continue
-                else:
-                    self.tablero.cambiar_estado(numero,color)
-                    self.restar_pieza()
-                    break
-        return numero                    
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit(0)
+                if pygame.mouse.get_pressed()[0]:
+                    x,y = pygame.mouse.get_pos()
+                    pos = self.tablero.obtener_posicion(x,y)
+                    pos = self.tablero.cambiar_estado(pos,color)
+                    if pos:
+                        self.restar_pieza()
+                        return pos
 
     def fase2(self,color):
         movibles = self.movibles(color)
         while True:
-            try:
-                print('Piezas movibles:',movibles)
-                origen = int(input("("+color+") PIEZA A MOVER:"))
-            except ValueError:
-                print('VALOR O VALORES INVALIDOS\n')
-                continue
-            if origen not in movibles:
-                print('PIEZA A MOVER INVALIDA\n')
-                continue
-            else:
-                try:
-                    posibles = self.movimientos_posibles(origen)
-                    print('Movimientos posibles:',posibles)
-                    destino = int(input("("+color+") POSICION A MOVER:"))
-                except ValueError:
-                    print('MOVIMIENTO INVALIDO\n')
-                    continue
-                if destino not in posibles:
-                    print('MOVIMIENTO DE '+str(origen)+' a '+str(destino)+' INVALIDO\n')
-                    continue
-                else:
-                    self.mover_pieza(origen,destino,color)
-                    break
-        return destino
-    
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit(0)
+                if pygame.mouse.get_pressed()[0]:
+                    x,y = pygame.mouse.get_pos()
+                    pos = self.tablero.obtener_posicion(x,y)
+                    if pos:
+                        if pos in movibles:
+                            posibles = self.movimientos_posibles(pos)  
+                            self.tablero.cambiar_estado(pos,'V')
+                            while True:
+                                for event in pygame.event.get():
+                                    if event.type == pygame.QUIT:
+                                        sys.exit(0)
+                                    if pygame.mouse.get_pressed()[0]:
+                                        x,y = pygame.mouse.get_pos()
+                                        pos2 = self.tablero.obtener_posicion(x,y)
+                                        if pos2 in posibles:
+                                            self.tablero.cambiar_estado(pos2,self.quien_juega().ver_color())
+                                            return pos2
 
     def fase3(self,color):
         movibles = self.en_juego(color)
         vacios = self.vacios()
         while True:
-            try:
-                print('Piezas movibles:',movibles)
-                origen = int(input("("+color+") PIEZA A MOVER:"))
-            except ValueError:
-                print('VALOR O VALORES INVALIDOS\n')
-                continue
-            if origen not in movibles:
-                print('PIEZA A MOVER INVALIDA\n')
-                continue
-            else:
-                try:
-                    print('Movimientos posibles:',vacios)
-                    destino = int(input("("+color+") POSICION A MOVER:"))
-                except ValueError:
-                    print('MOVIMIENTO INVALIDO\n')
-                    continue                    
-                if destino not in vacios:
-                    print('MOVIMIENTO DE '+str(origen)+' a '+str(destino)+' INVALIDO\n')
-                    continue
-                else:
-                    self.mover_pieza(origen,destino,color)
-                    break
-        return destino
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit(0)
+                if pygame.mouse.get_pressed()[0]:
+                    x,y = pygame.mouse.get_pos()
+                    pos = self.tablero.obtener_posicion(x,y)
+                    if pos:
+                        if pos in movibles:
+                            posibles = self.movimientos_posibles(pos)  
+                            self.tablero.cambiar_estado(pos,'V')
+                            while True:
+                                for event in pygame.event.get():
+                                    if event.type == pygame.QUIT:
+                                        sys.exit(0)
+                                    if pygame.mouse.get_pressed()[0]:
+                                        x,y = pygame.mouse.get_pos()
+                                        pos2 = self.tablero.obtener_posicion(x,y)
+                                        if pos2 in vacios:
+                                            self.tablero.cambiar_estado(pos2,self.quien_juega().ver_color())
+                                            return pos2
 
     def gane_o_no(self,color):
         rival = self.rival(color)
@@ -227,7 +211,7 @@ class Partida(object):
             return 1
 
     def jugar_turno(self):
-        self.ver_juego()
+        #self.ver_juego()
         # jugar dependiendo en la fase de juego que se encuentra el jugador
         # self.quien_juega determina el jugador que le toca
         jugador = self.quien_juega()
@@ -244,25 +228,19 @@ class Partida(object):
                 pieza_jugada = self.fase3(color)
         
         # despues de jugar revisar si se hizo un molino
+        '''
         if self.en_molino(pieza_jugada,color):
             self.eliminar_pieza(color)
 
         if self.gane_o_no(color) == 1:
             return 1
-
-        self.cambio_turno()        
+        '''
+        self.cambio_turno()   
 
     def jugar_partida(self):
+        self.tablero.dibujar_tablero()   
         while True:
             if self.jugar_turno() == 1:
                 break
             else:
                 continue
-
-    def movimiento_posible(x, y, area_posible):
-        print("punto a adjuntar", x, y)
-        for idx, punto_inicial in enumerate(area_posible):
-            if(x >= punto_inicial[0] and y >=punto_inicial[1] and x <= punto_inicial[0]+50 and y <=punto_inicial[1]+50):
-                print("posicion ", idx+1)
-                return True
-        return False

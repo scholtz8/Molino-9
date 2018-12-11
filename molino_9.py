@@ -1,7 +1,6 @@
 import pygame
 import random
 from pygame.locals import *
-from grafica_tablero import Tablero
 from partida import Partida
 
 FONDO = (32, 30, 32)
@@ -95,17 +94,19 @@ def main():
         pantalla.fill(FONDO)
         dibujar_botones_iniciales(botones)
         pantalla.blit(input_text, campo_texto['rect'].topleft)
-
+        
         if click and botones[0]['on_click']:
-        	if len(texto_entrada)==1:
-	        	numero = int(texto_entrada)
-	        	p = Partida(numero)
-	        click = False
+            if len(texto_entrada) != "":
+                numero = int(texto_entrada)
+                p = Partida(numero)
+                p.jugar_partida()
+            click = False
         if click:
             for i in range(1, 6):
                 if botones[i]['on_click'] and len(texto_entrada) < 4:
                 	texto_entrada = botones[i]['texto']
             click = False
+        
         set_text(campo_texto, texto_entrada)
         pygame.display.flip()
         clock.tick(60)
