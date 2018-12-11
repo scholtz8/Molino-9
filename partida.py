@@ -27,9 +27,9 @@ class Partida(object):
             return self.jugador2
 
     def quien_es(self,color):
-        if color == 'B':
+        if color == 'A':
             return self.jugador1
-        elif color == 'N':
+        elif color == 'R':
             return self.jugador2
 
     def vacios(self):
@@ -79,6 +79,7 @@ class Partida(object):
 
     # ver si pieza pertenece a un molino
     def en_molino(self,pieza,color):
+        print('en molino')
         molinos = self.tablero.ver_molinos(pieza)
         for molino in molinos:
             contador = 0
@@ -86,14 +87,16 @@ class Partida(object):
                 if self.tablero.ver_estado(nodo) == color:
                     contador += 1
             if contador == 3:
-                return True    
+                print('true')
+                return True
+        print('false')    
         return False
 
     # obtener el jugador oponente
     def rival(self,color_jugador):
-        if color_jugador == 'B':
+        if color_jugador == 'A':
             return self.jugador2
-        elif color_jugador == 'N':
+        elif color_jugador == 'R':
             return self.jugador1
 
     # lista de piezas que pueden ser eliminadas
@@ -115,19 +118,16 @@ class Partida(object):
         color_rival = self.rival(color).ver_color()
         eliminables = self.eliminables(color_rival)        
         while True:
-            try:
-                print('Piezas eliminables:',eliminables)
-                eliminada = int(input("("+color+") ELIJA LA PIEZA OPONENTE A ELIMINAR:"))
-            except ValueError:
-                print('VALOR INVALIDO\n')
-                continue
-            if eliminada not in eliminables:
-                print('VALOR INVALIDO\n')
-                continue
-            else:
-                self.tablero.cambiar_estado(eliminada,'V')
-                self.perder_pieza(color_rival)
-                break
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit(0)
+                if pygame.mouse.get_pressed()[0]:
+                    x,y = pygame.mouse.get_pos()
+                    pos = self.tablero.obtener_posicion(x,y)
+                    if pos in eliminables:
+                        self.tablero.cambiar_estado(pos,'V')
+                        self.perder_pieza(color_rival)
+                        return        
 
     def restar_pieza(self):
         self.quien_juega().restar_piezas()
@@ -228,19 +228,21 @@ class Partida(object):
                 pieza_jugada = self.fase3(color)
         
         # despues de jugar revisar si se hizo un molino
-        '''
+        
         if self.en_molino(pieza_jugada,color):
             self.eliminar_pieza(color)
-
+        
         if self.gane_o_no(color) == 1:
             return 1
-        '''
+        
         self.cambio_turno()   
 
     def jugar_partida(self):
         self.tablero.dibujar_tablero()   
         while True:
             if self.jugar_turno() == 1:
+                pantalla = pygame.display.set_mode([720, 460])
+                pygame.display.update()
                 break
             else:
                 continue
