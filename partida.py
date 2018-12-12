@@ -4,6 +4,8 @@ import pygame
 from pygame.locals import *
 from functools import partial
 
+img_panel = pygame.image.load("images/panelInset_beigeLight.png")
+
 class Partida(object):
 
     def __init__(self,num_piezas):
@@ -79,7 +81,6 @@ class Partida(object):
 
     # ver si pieza pertenece a un molino
     def en_molino(self,pieza,color):
-        print('en molino')
         molinos = self.tablero.ver_molinos(pieza)
         for molino in molinos:
             contador = 0
@@ -87,9 +88,7 @@ class Partida(object):
                 if self.tablero.ver_estado(nodo) == color:
                     contador += 1
             if contador == 3:
-                print('true')
                 return True
-        print('false')    
         return False
 
     # obtener el jugador oponente
@@ -157,8 +156,8 @@ class Partida(object):
                     pos = self.tablero.obtener_posicion(x,y)
                     if pos:
                         if pos in movibles:
-                            posibles = self.movimientos_posibles(pos)  
-                            self.tablero.cambiar_estado(pos,'V')
+                            posibles = self.movimientos_posibles(pos)
+                            self.tablero.cambiar_estado(pos,'S'+self.quien_juega().ver_color())   
                             while True:
                                 for event in pygame.event.get():
                                     if event.type == pygame.QUIT:
@@ -167,6 +166,7 @@ class Partida(object):
                                         x,y = pygame.mouse.get_pos()
                                         pos2 = self.tablero.obtener_posicion(x,y)
                                         if pos2 in posibles:
+                                            self.tablero.cambiar_estado(pos,'V')
                                             self.tablero.cambiar_estado(pos2,self.quien_juega().ver_color())
                                             return pos2
 
@@ -183,7 +183,7 @@ class Partida(object):
                     if pos:
                         if pos in movibles:
                             posibles = self.movimientos_posibles(pos)  
-                            self.tablero.cambiar_estado(pos,'V')
+                            self.tablero.cambiar_estado(pos,'S'+self.quien_juega().ver_color())  
                             while True:
                                 for event in pygame.event.get():
                                     if event.type == pygame.QUIT:
@@ -192,8 +192,10 @@ class Partida(object):
                                         x,y = pygame.mouse.get_pos()
                                         pos2 = self.tablero.obtener_posicion(x,y)
                                         if pos2 in vacios:
+                                            self.tablero.cambiar_estado(pos,'V')
                                             self.tablero.cambiar_estado(pos2,self.quien_juega().ver_color())
                                             return pos2
+                                            
 
     def gane_o_no(self,color):
         rival = self.rival(color)
@@ -201,12 +203,12 @@ class Partida(object):
         color_rival = rival.ver_color()
         movibles_rival = self.movibles(color_rival)
         no_jugadas_rival = rival.no_jugadas()
+        restantes_rival = self.piezas_por_jugador - rival.ver_perdidas()
         if movibles_rival.__len__() == 0 and no_jugadas_rival == 0:
             print(color, 'GANA')
             return 1
-
-        restantes_rival = self.piezas_por_jugador - rival.ver_perdidas()
-        if restantes_rival < 3:
+       
+        elif restantes_rival < 3:
             print(color, 'GANA')
             return 1
 
@@ -227,8 +229,7 @@ class Partida(object):
             else:
                 pieza_jugada = self.fase3(color)
         
-        # despues de jugar revisar si se hizo un molino
-        
+        # despues de jugar revisar si se hizo un molino        
         if self.en_molino(pieza_jugada,color):
             self.eliminar_pieza(color)
         
@@ -238,7 +239,8 @@ class Partida(object):
         self.cambio_turno()   
 
     def jugar_partida(self):
-        self.tablero.dibujar_tablero()   
+        panel = pygame.transform.scale(img_panel, [200,200])
+        self.tablero.dibujar_tablero()
         while True:
             if self.jugar_turno() == 1:
                 pantalla = pygame.display.set_mode([720, 460])
