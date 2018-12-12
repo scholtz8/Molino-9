@@ -91,7 +91,6 @@ class Tablero(object):
             pygame.draw.line(self.pantalla_tab, NEGRO, [790, 300], [630, 300], 3)
 
         for i in range(len(self.aristas)):
-            pygame.draw.rect(self.pantalla_tab, CAFE, [self.aristas[i][0], self.aristas[i][1], 50, 50], 2)
             pygame.draw.circle(self.pantalla_tab, NEGRO, (self.aristas[i][0]+25,self.aristas[i][1]+25),9)
 
         pygame.display.flip()
@@ -105,8 +104,8 @@ class Tablero(object):
                 color = self.color_ficha(estado)
                 jug = pygame.transform.scale(color, [50, 50])
                 centro = self.centro_posicion(pos)
-                self.pantalla_tab.blit(jug, centro)
-                pygame.display.update()
+                self.pantalla_tab.blit(jug, centro)            
+        pygame.display.update()
 
     def ver_estado(self,pos):
         return self.grafo.node[pos]['estado']
@@ -116,8 +115,10 @@ class Tablero(object):
             color = pygame.image.load("images/ficha-roja.png")
         elif letra_color == 'A':
             color = pygame.image.load("images/ficha-azul.png")
-        elif letra_color == 'B':
-            color = pygame.image.load("images/ficha-blanca.png")
+        elif letra_color == 'SA':
+            color = pygame.image.load("images/ficha-azulS.png")
+        elif letra_color == 'SR':
+            color = pygame.image.load("images/ficha-rojaS.png")
         return color
 
     def obtener_posicion(self,x,y):
@@ -149,6 +150,14 @@ class Tablero(object):
     def cambiar_estado(self,pos,estado):
         if pos > 0:
             if self.grafo.node[pos]['estado'] == 'V':
+                color = self.color_ficha(estado)
+                jug = pygame.transform.scale(color, [50, 50])
+                centro = self.centro_posicion(pos)
+                self.pantalla_tab.blit(jug, centro)
+                self.grafo.node[pos]['estado'] = estado
+                pygame.display.update()
+                return pos
+            elif estado ==  'S'+self.grafo.node[pos]['estado']:
                 color = self.color_ficha(estado)
                 jug = pygame.transform.scale(color, [50, 50])
                 centro = self.centro_posicion(pos)
