@@ -98,7 +98,7 @@ def main():
         if click and botones[0]['on_click']:
             if len(texto_entrada) != "":
                 numero = int(texto_entrada)
-                p = Partida(numero)
+                p = Partida(numero,'j1','IA')
                 p.jugar_partida()
             click = False
         if click:
