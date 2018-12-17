@@ -139,25 +139,3 @@ class Tablero(object):
         return [n for n in self.grafo[pos]]
 
 
-    def cambiar_estado(self,pos,estado):
-        if pos > 0:
-            if estado == 'V':
-                self.grafo.node[pos]['estado'] = 'V'
-                self.actualizar_tablero()
-                return False
-            elif self.grafo.node[pos]['estado'] == 'V':
-                color = self.color_ficha(estado)
-                jug = pygame.transform.scale(color, [50, 50])
-                centro = self.centro_posicion(pos)
-                self.pantalla_tab.blit(jug, centro)
-                self.grafo.node[pos]['estado'] = estado
-                pygame.display.update()
-                return pos
-            elif estado ==  'S'+self.grafo.node[pos]['estado']:
-                color = self.color_ficha(estado)
-                jug = pygame.transform.scale(color, [50, 50])
-                centro = self.centro_posicion(pos)
-                self.pantalla_tab.blit(jug, centro)
-                self.grafo.node[pos]['estado'] = estado
-                pygame.display.update()
-                return pos
