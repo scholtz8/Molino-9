@@ -142,70 +142,7 @@ class Partida(object):
         self.quien_juega().restar_piezas()
 
      # fase de colocar piezas en el tablero
-    def fase1(self,color):
-        while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit(0)
-                if pygame.mouse.get_pressed()[0]:
-                    x,y = pygame.mouse.get_pos()
-                    pos = self.tablero.obtener_posicion(x,y)
-                    pos = self.cambiar_estado(pos,color)
-                    if pos:
-                        self.restar_pieza()
-                        return pos
-
-    def fase2(self,color):
-        movibles = self.movibles(color)
-        while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit(0)
-                if pygame.mouse.get_pressed()[0]:
-                    x,y = pygame.mouse.get_pos()
-                    pos = self.tablero.obtener_posicion(x,y)
-                    if pos:
-                        if pos in movibles:
-                            posibles = self.movimientos_posibles(pos)
-                            self.cambiar_estado(pos,'S'+self.quien_juega().ver_color())   
-                            while True:
-                                for event in pygame.event.get():
-                                    if event.type == pygame.QUIT:
-                                        sys.exit(0)
-                                    if pygame.mouse.get_pressed()[0]:
-                                        x,y = pygame.mouse.get_pos()
-                                        pos2 = self.tablero.obtener_posicion(x,y)
-                                        if pos2 in posibles:
-                                            self.cambiar_estado(pos,'V')
-                                            self.cambiar_estado(pos2,self.quien_juega().ver_color())
-                                            return pos2
-
-    def fase3(self,color):
-        movibles = self.en_juego(color)
-        vacios = self.vacios()
-        while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit(0)
-                if pygame.mouse.get_pressed()[0]:
-                    x,y = pygame.mouse.get_pos()
-                    pos = self.tablero.obtener_posicion(x,y)
-                    if pos:
-                        if pos in movibles:
-                            posibles = self.movimientos_posibles(pos)  
-                            self.cambiar_estado(pos,'S'+self.quien_juega().ver_color())  
-                            while True:
-                                for event in pygame.event.get():
-                                    if event.type == pygame.QUIT:
-                                        sys.exit(0)
-                                    if pygame.mouse.get_pressed()[0]:
-                                        x,y = pygame.mouse.get_pos()
-                                        pos2 = self.tablero.obtener_posicion(x,y)
-                                        if pos2 in vacios:
-                                            self.cambiar_estado(pos,'V')
-                                            self.cambiar_estado(pos2,self.quien_juega().ver_color())
-                                            return pos2
-                                            
+    def fase1(self,color):                                           
         if self.quien_juega().nombre == 'IA':
             pos = ht.posicionar(self,color)
             pygame.time.delay(1000)
