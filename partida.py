@@ -3,12 +3,14 @@ from jugador import Jugador
 import pygame
 from pygame.locals import *
 from functools import partial
+import os
 import sys
 import heuristicas as ht
 
-
 img_panel = pygame.image.load("images/panelInset_beigeLight.png")
-
+Color_titulo = (51,25,0)
+AZUL = (0,0,102)
+ROJO = (102,0,0)
 
 class Partida(object):
 
@@ -23,13 +25,13 @@ class Partida(object):
     def cambio_turno(self):
         if self.turno == 1:
             self.turno = 2
-        elif self.turno == 2:
+        elif self.turno == 2:          
             self.turno = 1
-            
+       
     def quien_juega(self):
-        if self.turno == 1:
+        if self.turno == 1:   
             return self.jugador1
-        elif self.turno == 2:
+        elif self.turno == 2:   
             return self.jugador2
 
     def quien_es(self,color):
@@ -244,11 +246,27 @@ class Partida(object):
         restantes_rival = self.piezas_por_jugador - rival.ver_perdidas()
 
         if movibles_rival.__len__() == 0 and no_jugadas_rival == 0:
-            print(color, 'GANA')
+            if color=='A':
+                ganador = pygame.image.load("images/ganador_azul.png")
+                ganador = pygame.transform.scale(ganador, [1000, 600])
+                self.tablero.pantalla_tab.blit(ganador, (30,20))
+            else:
+                ganador = pygame.image.load("images/ganador_rojo.png")
+                ganador = pygame.transform.scale(ganador, [1000, 600])
+                self.tablero.pantalla_tab.blit(ganador, (30,20))
+            pygame.display.update()    
             return 1
        
         elif restantes_rival < 3:
-            print(color, 'GANA')
+            if color=='A':
+                ganador = pygame.image.load("images/ganador_azul.png")
+                ganador = pygame.transform.scale(ganador, [1000, 600])
+                self.tablero.pantalla_tab.blit(ganador, (30,20))
+            else:
+                ganador = pygame.image.load("images/ganador_rojo.png")
+                ganador = pygame.transform.scale(ganador, [1000, 600])
+                self.tablero.pantalla_tab.blit(ganador, (30,20))
+            pygame.display.update()        
             return 1
 
     def jugar_turno(self):
@@ -270,55 +288,86 @@ class Partida(object):
         self.informacion()
         # despues de jugar revisar si se hizo un molino        
         if self.en_molino(pieza_jugada,color):
+            jugador.molino = True
+            jugador.molino = jugador.molino+1            
+            self.informacion()
             self.eliminar_pieza(color)
         self.informacion()
 
-        if self.gane_o_no(color) == 1:
-            pygame.time.delay(1000)
+        if self.gane_o_no(color)==1:
+            pygame.time.delay(10000)
             return 1
         
         self.cambio_turno() 
 
-    #jugador 1 azul
-    #jugador 2 rojo
+    #Completa el panel de información
     def informacion(self):
-        Color_titulo = (51,25,0)
-        AZUL = (0,0,102)
-        ROJO = (102,0,0)
         marcador = pygame.image.load("images/marcador.png")
         marcador = pygame.transform.scale(marcador, [300, 500])
         self.tablero.pantalla_tab.blit(marcador, (900,50))
-
         fuente = pygame.font.Font(None, 30)
         texto_inicial = "Información de Juego"
         texto_jugador1 = "Jugador Azul"
         texto_jugadas1 = "Fichas jugadas = "+str(self.piezas_por_jugador - self.jugador1.piezas)
         texto_perdidas1 = "Fichas perdidas= "+str(self.jugador1.perdidas)
+        texto_molinos1 = "N° molinos= "+str(self.jugador1.num_molino)
         texto_jugador2 = "Jugador Rojo"
         texto_jugadas2 = "Fichas jugadas = "+str(self.piezas_por_jugador - self.jugador2.piezas)
         texto_perdidas2 = "Fichas perdidas= "+str(self.jugador2.perdidas)
+        texto_molinos2 = "N° molinos= "+str(self.jugador1.num_molino)
         texto = fuente.render(texto_inicial, True, Color_titulo)
-        linea1 = fuente.render(texto_jugador1, True, AZUL)
-        linea2 = fuente.render(texto_jugadas1, True, AZUL)
-        linea3 = fuente.render(texto_perdidas1, True, AZUL)
-        linea4 = fuente.render(texto_jugador2, True, ROJO)
-        linea5 = fuente.render(texto_jugadas2, True, ROJO)
-        linea6 = fuente.render(texto_perdidas2, True, ROJO)
+        linea11 = fuente.render(texto_jugador1, True, AZUL)
+        linea12 = fuente.render(texto_jugadas1, True, AZUL)
+        linea13 = fuente.render(texto_perdidas1, True, AZUL)
+        linea14 = fuente.render(texto_molinos1, True, AZUL)
+        linea21 = fuente.render(texto_jugador2, True, ROJO)
+        linea22 = fuente.render(texto_jugadas2, True, ROJO)
+        linea23 = fuente.render(texto_perdidas2, True, ROJO)
+        linea24 = fuente.render(texto_molinos2, True, ROJO)
         self.tablero.pantalla_tab.blit(texto, [930, 80])
-        self.tablero.pantalla_tab.blit(linea1, [915, 105])
-        self.tablero.pantalla_tab.blit(linea2, [915, 125])
-        self.tablero.pantalla_tab.blit(linea3, [915, 145])
-        self.tablero.pantalla_tab.blit(linea4, [915, 165])
-        self.tablero.pantalla_tab.blit(linea5, [915, 185])
-        self.tablero.pantalla_tab.blit(linea6, [915, 205])
+        self.tablero.pantalla_tab.blit(linea11, [915, 105])
+        self.tablero.pantalla_tab.blit(linea12, [915, 125])
+        self.tablero.pantalla_tab.blit(linea13, [915, 145])
+        self.tablero.pantalla_tab.blit(linea14, [915, 165])
+
+        self.tablero.pantalla_tab.blit(linea21, [915, 205])
+        self.tablero.pantalla_tab.blit(linea22, [915, 225])
+        self.tablero.pantalla_tab.blit(linea23, [915, 245])
+        self.tablero.pantalla_tab.blit(linea24, [915, 265])
+        if self.turno == 1:
+            texto_jugador = "Es turno del Jugador Rojo"
+            linea = fuente.render(texto_jugador, True, ROJO)
+            self.tablero.pantalla_tab.blit(linea, [915, 300])    
+        elif self.turno == 2:
+            texto_jugador = "Es turno del Jugador Azul"
+            linea = fuente.render(texto_jugador, True, AZUL)
+            self.tablero.pantalla_tab.blit(linea, [915, 300])  
+        
+        texto_jugador = "Molino formado"
+        texto_eliminar = "Seleccione una pieza del"
+        texto_eliminar2="contrincante"
+        if self.jugador1.molino:           
+            linea_molino = fuente.render(texto_jugador, True, AZUL) 
+            self.tablero.pantalla_tab.blit(linea_molino, [915, 320])
+            linea_eliminar = fuente.render(texto_eliminar, True, AZUL) 
+            self.tablero.pantalla_tab.blit(linea_eliminar, [915, 340])
+            linea_eliminar2 = fuente.render(texto_eliminar2, True, AZUL) 
+            self.tablero.pantalla_tab.blit(linea_eliminar2, [915, 360])
+        elif self.jugador2.molino:
+            linea_molino = fuente.render(texto_jugador, True, ROJO)
+            self.tablero.pantalla_tab.blit(linea_molino, [915, 320])
+            linea_eliminar = fuente.render(texto_eliminar, True, ROJO) 
+            self.tablero.pantalla_tab.blit(linea_eliminar, [915, 340])      
+            linea_eliminar2 = fuente.render(texto_eliminar2, True, ROJO) 
+            self.tablero.pantalla_tab.blit(linea_eliminar2, [915, 360])
         pygame.display.update()
 
     def jugar_partida(self):
-        panel = pygame.transform.scale(img_panel, [200,200])
+        panel = pygame.transform.scale(img_panel, [1020, 630])
         self.tablero.dibujar_tablero()
         while True:
             if self.jugar_turno() == 1:
-                pantalla = pygame.display.set_mode([720, 460])
+                pantalla = pygame.display.set_mode([1080, 690])
                 pygame.display.update()
                 break
             else:

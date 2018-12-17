@@ -8,6 +8,10 @@ class Jugador(object):
         self.piezas = num_piezas
         # numero de piezas perdidas
         self.perdidas = 0
+        # formación de molino
+        self.molino = False
+        # numero de molinos formados
+        self.num_molino = 0
 
     def no_jugadas(self):
         return self.piezas
