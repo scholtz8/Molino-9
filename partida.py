@@ -291,6 +291,7 @@ class Partida(object):
             jugador.molino = jugador.molino+1            
             self.informacion()
             self.eliminar_pieza(color)
+        jugador.molino = False
         self.informacion()
 
         if self.gane_o_no(color)==1:
