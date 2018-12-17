@@ -2,7 +2,6 @@ from tablero import Tablero
 from jugador import Jugador
 import pygame
 from pygame.locals import *
-from functools import partial
 import os
 import sys
 import heuristicas as ht

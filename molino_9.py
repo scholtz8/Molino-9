@@ -1,5 +1,4 @@
 import pygame
-import random
 from pygame.locals import *
 from partida import Partida
 import os
@@ -22,7 +21,7 @@ imagen_boton_pressed = pygame.image.load("images/buttonPressed.png")
 imagen_boton_cuadro = pygame.image.load("images/buttonSquare.png")
 imagen_boton_cuadro_pressed = pygame.image.load("images/buttonSquarePressed.png")
 imagen_text = pygame.image.load("images/panelInset_brown.png")
-icon = pygame.image.load("images/molino.png")
+icon = pygame.image.load("images/molino-icon.png")
 fuente = pygame.font.SysFont('Courier', 20)
 fuente_numero = pygame.font.SysFont('Pacifico Regular', 30)
 

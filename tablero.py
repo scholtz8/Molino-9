@@ -1,7 +1,6 @@
 import networkx as net
 import pygame
 from pygame.locals import *
-from functools import partial
 import os
 import sys
 
