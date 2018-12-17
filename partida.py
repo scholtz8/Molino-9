@@ -118,20 +118,6 @@ class Partida(object):
         self.quien_es(color).sumar_perdidas()
 
     def eliminar_pieza(self,color):
-        color_rival = self.rival(color).ver_color()
-        eliminables = self.eliminables(color_rival)        
-        while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit(0)
-                if pygame.mouse.get_pressed()[0]:
-                    x,y = pygame.mouse.get_pos()
-                    pos = self.tablero.obtener_posicion(x,y)
-                    if pos in eliminables:
-                        self.cambiar_estado(pos,'V')
-                        self.perder_pieza(color_rival)
-                        return        
-        
         if self.quien_juega().nombre == 'IA':
             pos = ht.eliminar(self,color)
             pygame.time.delay(1000)
