@@ -1,6 +1,7 @@
 class Jugador(object):
 
-    def __init__(self,num_piezas,color):
+    def __init__(self,num_piezas,color,nombre):
+        self.nombre = nombre
         # color del jugador
         self.color = color
         # numero de piezas no jugadas
