@@ -138,4 +138,37 @@ class Tablero(object):
     def adyacentes(self,pos):
         return [n for n in self.grafo[pos]]
 
+    def actualizar_tablero(self):
+        self.dibujar_tablero()
+        for idx, punto in enumerate(self.aristas):
+            pos = idx+1
+            estado = self.grafo.node[pos]['estado']
+            if  estado != 'V':
+                color = self.color_ficha(estado)
+                jug = pygame.transform.scale(color, [50, 50])
+                centro = self.centro_posicion(pos)
+                self.pantalla_tab.blit(jug, centro)            
+        pygame.display.update()
 
+    def cambiar_estado(self,pos,estado):
+        if pos > 0:
+            if self.grafo.node[pos]['estado'] == 'V':
+                color = self.color_ficha(estado)
+                jug = pygame.transform.scale(color, [50, 50])
+                centro = self.centro_posicion(pos)
+                self.pantalla_tab.blit(jug, centro)
+                self.grafo.node[pos]['estado'] = estado
+                pygame.display.update()
+                return pos
+            elif estado ==  'S'+self.grafo.node[pos]['estado']:
+                color = self.color_ficha(estado)
+                jug = pygame.transform.scale(color, [50, 50])
+                centro = self.centro_posicion(pos)
+                self.pantalla_tab.blit(jug, centro)
+                self.grafo.node[pos]['estado'] = estado
+                pygame.display.update()
+                return pos
+            elif estado == 'V':
+                self.grafo.node[pos]['estado'] = 'V'
+                self.actualizar_tablero()
+                return False
