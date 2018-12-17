@@ -2,10 +2,14 @@ import pygame
 import random
 from pygame.locals import *
 from partida import Partida
+import os
+import sys
 
 FONDO = (32, 30, 32)
 BLANCO = (255, 255, 255)
 COLOR_TEXTO = (50, 60, 80)
+
+os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 pygame.init()
 dimensiones = [720, 460]
@@ -17,6 +21,7 @@ imagen_boton_pressed = pygame.image.load("images/buttonPressed.png")
 imagen_boton_cuadro = pygame.image.load("images/buttonSquare.png")
 imagen_boton_cuadro_pressed = pygame.image.load("images/buttonSquarePressed.png")
 imagen_text = pygame.image.load("images/panelInset_brown.png")
+icon = pygame.image.load("images/molino.png")
 fuente = pygame.font.SysFont('Courier', 20)
 fuente_numero = pygame.font.SysFont('Pacifico Regular', 30)
 
@@ -44,7 +49,7 @@ def set_text(campo, texto):
 def main():
     game_over = False
     clock = pygame.time.Clock()
-
+    pygame.display.set_icon(icon)
     boton_cuadro = pygame.transform.scale(imagen_boton_cuadro, [90, 90])
     boton_cuadro_pressed = pygame.transform.scale(imagen_boton_cuadro_pressed, [90, 90])
     input_text = pygame.transform.scale(imagen_text, [440, 50])

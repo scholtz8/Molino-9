@@ -3,6 +3,7 @@ from jugador import Jugador
 import pygame
 from pygame.locals import *
 from functools import partial
+import sys
 
 img_panel = pygame.image.load("images/panelInset_beigeLight.png")
 
@@ -76,8 +77,8 @@ class Partida(object):
 
     # mueve una pieza de un lugar a otro
     def mover_pieza(self,origen,destino,color):
-        self.tablero.cambiar_estado(origen,'V')
-        self.tablero.cambiar_estado(destino,color)
+        self.cambiar_estado(origen,'V')
+        self.cambiar_estado(destino,color)
 
     # ver si pieza pertenece a un molino
     def en_molino(self,pieza,color):
@@ -124,7 +125,7 @@ class Partida(object):
                     x,y = pygame.mouse.get_pos()
                     pos = self.tablero.obtener_posicion(x,y)
                     if pos in eliminables:
-                        self.tablero.cambiar_estado(pos,'V')
+                        self.cambiar_estado(pos,'V')
                         self.perder_pieza(color_rival)
                         return        
 
@@ -140,7 +141,7 @@ class Partida(object):
                 if pygame.mouse.get_pressed()[0]:
                     x,y = pygame.mouse.get_pos()
                     pos = self.tablero.obtener_posicion(x,y)
-                    pos = self.tablero.cambiar_estado(pos,color)
+                    pos = self.cambiar_estado(pos,color)
                     if pos:
                         self.restar_pieza()
                         return pos
@@ -157,7 +158,7 @@ class Partida(object):
                     if pos:
                         if pos in movibles:
                             posibles = self.movimientos_posibles(pos)
-                            self.tablero.cambiar_estado(pos,'S'+self.quien_juega().ver_color())   
+                            self.cambiar_estado(pos,'S'+self.quien_juega().ver_color())   
                             while True:
                                 for event in pygame.event.get():
                                     if event.type == pygame.QUIT:
@@ -166,8 +167,8 @@ class Partida(object):
                                         x,y = pygame.mouse.get_pos()
                                         pos2 = self.tablero.obtener_posicion(x,y)
                                         if pos2 in posibles:
-                                            self.tablero.cambiar_estado(pos,'V')
-                                            self.tablero.cambiar_estado(pos2,self.quien_juega().ver_color())
+                                            self.cambiar_estado(pos,'V')
+                                            self.cambiar_estado(pos2,self.quien_juega().ver_color())
                                             return pos2
 
     def fase3(self,color):
@@ -183,7 +184,7 @@ class Partida(object):
                     if pos:
                         if pos in movibles:
                             posibles = self.movimientos_posibles(pos)  
-                            self.tablero.cambiar_estado(pos,'S'+self.quien_juega().ver_color())  
+                            self.cambiar_estado(pos,'S'+self.quien_juega().ver_color())  
                             while True:
                                 for event in pygame.event.get():
                                     if event.type == pygame.QUIT:
@@ -192,8 +193,8 @@ class Partida(object):
                                         x,y = pygame.mouse.get_pos()
                                         pos2 = self.tablero.obtener_posicion(x,y)
                                         if pos2 in vacios:
-                                            self.tablero.cambiar_estado(pos,'V')
-                                            self.tablero.cambiar_estado(pos2,self.quien_juega().ver_color())
+                                            self.cambiar_estado(pos,'V')
+                                            self.cambiar_estado(pos2,self.quien_juega().ver_color())
                                             return pos2
                                             
 
@@ -220,14 +221,17 @@ class Partida(object):
         color = jugador.ver_color()
         piezas_sin_jugar = jugador.no_jugadas()
         piezas_restantes = self.piezas_por_jugador - jugador.ver_perdidas()
-
+        self.informacion()
         if piezas_sin_jugar > 0:
             pieza_jugada = self.fase1(color)
+            self.informacion()
         else:
             if piezas_restantes > 3:
                 pieza_jugada = self.fase2(color)
+                self.informacion()
             else:
                 pieza_jugada = self.fase3(color)
+                self.informacion()
         
         # despues de jugar revisar si se hizo un molino        
         if self.en_molino(pieza_jugada,color):
@@ -236,7 +240,40 @@ class Partida(object):
         if self.gane_o_no(color) == 1:
             return 1
         
-        self.cambio_turno()   
+        self.cambio_turno() 
+
+    #jugador 1 azul
+    #jugador 2 rojo
+    def informacion(self):
+        Color_titulo = (51,25,0)
+        AZUL = (0,0,102)
+        ROJO = (102,0,0)
+        marcador = pygame.image.load("images/marcador.png")
+        marcador = pygame.transform.scale(marcador, [300, 500])
+        self.tablero.pantalla_tab.blit(marcador, (900,50))
+
+        fuente = pygame.font.Font(None, 30)
+        texto_inicial = "Información de Juego"
+        texto_jugador1 = "Jugador Azul"
+        texto_jugadas1 = "Fichas jugadas = "+str(self.piezas_por_jugador - self.jugador1.piezas)
+        texto_perdidas1 = "Fichas perdidas= "+str(self.jugador1.perdidas)
+        texto_jugador2 = "Jugador Rojo"
+        texto_jugadas2 = "Fichas jugadas = "+str(self.piezas_por_jugador - self.jugador2.piezas)
+        texto_perdidas2 = "Fichas perdidas= "+str(self.jugador2.perdidas)
+        texto = fuente.render(texto_inicial, True, Color_titulo)
+        linea1 = fuente.render(texto_jugador1, True, AZUL)
+        linea2 = fuente.render(texto_jugadas1, True, AZUL)
+        linea3 = fuente.render(texto_perdidas1, True, AZUL)
+        linea4 = fuente.render(texto_jugador2, True, ROJO)
+        linea5 = fuente.render(texto_jugadas2, True, ROJO)
+        linea6 = fuente.render(texto_perdidas2, True, ROJO)
+        self.tablero.pantalla_tab.blit(texto, [930, 80])
+        self.tablero.pantalla_tab.blit(linea1, [915, 105])
+        self.tablero.pantalla_tab.blit(linea2, [915, 125])
+        self.tablero.pantalla_tab.blit(linea3, [915, 145])
+        self.tablero.pantalla_tab.blit(linea4, [915, 165])
+        self.tablero.pantalla_tab.blit(linea5, [915, 185])
+        self.tablero.pantalla_tab.blit(linea6, [915, 205])
 
     def jugar_partida(self):
         panel = pygame.transform.scale(img_panel, [200,200])
@@ -248,3 +285,41 @@ class Partida(object):
                 break
             else:
                 continue
+
+    def actualizar_tablero(self):
+        self.tablero.dibujar_tablero()
+        self.informacion()
+        for idx, punto in enumerate(self.tablero.aristas):
+            pos = idx+1
+            estado = self.tablero.grafo.node[pos]['estado']
+            if  estado != 'V':
+                color = self.tablero.color_ficha(estado)
+                jug = pygame.transform.scale(color, [50, 50])
+                centro = self.tablero.centro_posicion(pos)
+                self.tablero.pantalla_tab.blit(jug, centro)            
+        pygame.display.update()
+
+    def cambiar_estado(self,pos,estado):
+        if pos > 0:
+            if self.tablero.grafo.node[pos]['estado'] == 'V':
+                color = self.tablero.color_ficha(estado)
+                jug = pygame.transform.scale(color, [50, 50])
+                centro = self.tablero.centro_posicion(pos)
+                self.tablero.pantalla_tab.blit(jug, centro)
+                self.tablero.grafo.node[pos]['estado'] = estado
+                self.informacion()
+                pygame.display.update()
+                return pos
+            elif estado ==  'S'+self.tablero.grafo.node[pos]['estado']:
+                color = self.tablero.color_ficha(estado)
+                jug = pygame.transform.scale(color, [50, 50])
+                centro = self.tablero.centro_posicion(pos)
+                self.tablero.pantalla_tab.blit(jug, centro)
+                self.tablero.grafo.node[pos]['estado'] = estado
+                self.informacion()
+                pygame.display.update()
+                return pos
+            elif estado == 'V':
+                self.tablero.grafo.node[pos]['estado'] = 'V'
+                self.actualizar_tablero()
+                return False

@@ -1,4 +1,3 @@
-
 class Jugador(object):
 
     def __init__(self,num_piezas,color):
@@ -23,3 +22,5 @@ class Jugador(object):
 
     def sumar_perdidas(self):
         self.perdidas += 1
+
+
