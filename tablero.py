@@ -59,14 +59,17 @@ class Tablero(object):
 
 	##Función encargada de dibujar el tablero según la cantidad de fichas seleccionadas
     def dibujar_tablero(self):
+        os.environ['SDL_VIDEO_CENTERED'] = '1'
         pygame.init()
-        self.pantalla_tab=pygame.display.set_mode([1064,603])
+        self.pantalla_tab=pygame.display.set_mode([1264,603])
         fondo = pygame.image.load("images/fondo3.jpeg").convert()       
         pygame.display.set_caption("Molino 9 - Tablero "+str(self.numero)+" piezas")
         self.pantalla_tab.blit(fondo, (0, 0))
+        marcador = pygame.image.load("images/marcador.png")
+        marcador = pygame.transform.scale(marcador, [300, 500])
+        self.pantalla_tab.blit(marcador, (900,50))
 
         pygame.draw.rect(self.pantalla_tab, NEGRO, [270, 40, 520, 520], 3)
-        
         if self.numero == 3:
             pygame.draw.line(self.pantalla_tab, NEGRO, [530, 40], [530, 560], 4)
             pygame.draw.line(self.pantalla_tab, NEGRO, [270, 300], [790, 300], 4)
@@ -94,19 +97,7 @@ class Tablero(object):
             pygame.draw.circle(self.pantalla_tab, NEGRO, (self.aristas[i][0]+25,self.aristas[i][1]+25),9)
 
         pygame.display.flip()
-
-    def actualizar_tablero(self):
-        self.dibujar_tablero()
-        for idx, punto in enumerate(self.aristas):
-            pos = idx+1
-            estado = self.grafo.node[pos]['estado']
-            if  estado != 'V':
-                color = self.color_ficha(estado)
-                jug = pygame.transform.scale(color, [50, 50])
-                centro = self.centro_posicion(pos)
-                self.pantalla_tab.blit(jug, centro)            
-        pygame.display.update()
-
+        
     def ver_estado(self,pos):
         return self.grafo.node[pos]['estado']
 
@@ -146,6 +137,7 @@ class Tablero(object):
 
     def adyacentes(self,pos):
         return [n for n in self.grafo[pos]]
+
 
     def cambiar_estado(self,pos,estado):
         if pos > 0:
